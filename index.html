@@ -1,259 +1,519 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qualify Your Lead</title>
-    <!-- Inter Font from Google Fonts -->
+    <title>Lead Scoring & Automation</title>
+    
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The SPA is designed as a single, vertically-scrolling page with a top-level navigation bar to switch between two main views: the 'Lead Submission Form' and the 'Interactive Workflow'. This design was chosen to combine two distinct user tasks—submitting a lead and understanding the underlying process—into one cohesive application without forcing a user to leave the page. The navigation provides a clear and intuitive way to access each view. This new structure logically separates the 'input' and 'explanation' sections for better user flow. -->
+    <!-- Visualization & Content Choices: The form itself is a functional UI for user input. The interactive workflow diagram is used to explain the backend process, with a modal for in-depth details on each step. The Lead Score Simulator is retained as a hands-on element to demystify the scoring logic. These elements are presented in separate views controlled by the navigation, making the application multi-functional while still feeling like a single, integrated tool. No SVG/Mermaid is used, adhering to the project constraints. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #F8F5F2; /* Warm Neutral Background */
+            color: #333333;
+        }
+        .accent-color { color: #4A90E2; }
+        .accent-bg { background-color: #4A90E2; }
+        .secondary-bg { background-color: #EAE6E1; }
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-content {
+            transition: transform 0.25s ease;
+        }
+        .flow-arrow {
+            font-size: 2rem;
+            color: #d1d5db;
+        }
+        .tab-button.active {
+            background-color: white;
+            color: #4A90E2;
+            border-bottom: 2px solid #4A90E2;
         }
     </style>
 </head>
-<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
+<body class="antialiased">
 
-    <!-- Main Container Card -->
-    <div class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl p-8 md:p-12 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-3xl">
-
-        <!-- Header -->
-        <div class="text-center mb-10">
-            <h1 class="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight leading-tight">
-                Qualify Your Lead
-            </h1>
-            <p class="text-lg text-gray-500 font-medium">
-                Fill out the form below to submit a new lead to our system.
-            </p>
-        </div>
-        
-        <!-- Logo -->
-        <div class="text-center mb-10">
-            <img src="https://www.renewableenergymarketing.net/wp-content/uploads/2019/02/Skip-Hire-REM-Waste-Transparent-logo.png" onerror="this.onerror=null;this.src='https://placehold.co/200x50/000000/FFFFFF?text=REM+WASTE'" alt="REM Waste Logo" class="mx-auto h-12 w-auto">
-        </div>
-
-        <!-- Form -->
-        <form id="leadForm" class="space-y-6">
-            <!-- Full Name -->
-            <div>
-                <label for="full_name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                <input type="text" id="full_name" name="full_name" required
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
-            </div>
-
-            <!-- Email -->
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input type="email" id="email" name="email" required
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
-            </div>
-
-            <!-- Phone -->
-            <div>
-                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                <input type="tel" id="phone" name="phone"
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
-            </div>
-
-            <!-- Company Size -->
-            <div>
-                <label for="company_size" class="block text-sm font-medium text-gray-700 mb-1">Company Size</label>
-                <input type="text" id="company_size" name="company_size"
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
-            </div>
-
-            <!-- Budget -->
-            <div>
-                <label for="budget" class="block text-sm font-medium text-gray-700 mb-1">Budget (£)</label>
-                <input type="number" id="budget" name="budget" required
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
-            </div>
-
-            <!-- Interest Level -->
-            <div>
-                <label for="interest_level" class="block text-sm font-medium text-gray-700 mb-1">Interest Level</label>
-                <select id="interest_level" name="interest_level" required
-                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                </select>
-            </div>
-
-            <!-- Buttons for submission and LLM feature -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                <button type="submit"
-                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-lg font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200">
+    <!-- Header & Navigation -->
+    <header class="bg-gray-100 shadow-md sticky top-0 z-10">
+        <nav class="container mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
+            <div class="text-xl font-extrabold tracking-tight mb-2 sm:mb-0">REM Waste</div>
+            <div class="flex space-x-2 md:space-x-4">
+                <button id="form-tab" class="tab-button active px-4 py-2 font-medium text-gray-700 rounded-lg transition-colors duration-200">
                     Submit Lead
                 </button>
-                <button type="button" id="generateEmailBtn"
-                        class="w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-lg font-bold text-gray-900 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all duration-200">
-                    ✨ Generate Follow-up Email
+                <button id="spa-tab" class="tab-button px-4 py-2 font-medium text-gray-700 rounded-lg transition-colors duration-200">
+                    Explore Workflow
                 </button>
             </div>
-        </form>
+        </nav>
+    </header>
 
-        <!-- LLM Response Area -->
-        <div id="llmResponseArea" class="mt-8 hidden">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Generated Email Draft</h2>
-            <div id="emailOutput" class="bg-gray-50 p-6 rounded-xl border border-gray-200 text-gray-700 leading-relaxed whitespace-pre-wrap">
-                <!-- LLM generated text will be inserted here -->
+    <main class="container mx-auto px-4 pb-20">
+
+        <!-- Form Section -->
+        <section id="form-view" class="my-16">
+            <div class="max-w-2xl mx-auto w-full bg-white rounded-3xl shadow-2xl p-8 md:p-12 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-3xl">
+                <div class="text-center mb-10">
+                    <h1 class="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight leading-tight">
+                        Qualify Your Lead
+                    </h1>
+                    <p class="text-lg text-gray-500 font-medium">
+                        Fill out the form below to submit a new lead to our system.
+                    </p>
+                </div>
+                
+                <div class="text-center mb-10">
+                    <img src="https://www.renewableenergymarketing.net/wp-content/uploads/2019/02/Skip-Hire-REM-Waste-Transparent-logo.png" onerror="this.onerror=null;this.src='https://placehold.co/200x50/000000/FFFFFF?text=REM+WASTE'" alt="REM Waste Logo" class="mx-auto h-12 w-auto">
+                </div>
+
+                <form id="leadForm" class="space-y-6">
+                    <div>
+                        <label for="full_name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="full_name" name="full_name" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="email" name="email" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                        <input type="tel" id="phone" name="phone" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="company_size" class="block text-sm font-medium text-gray-700 mb-1">Company Size</label>
+                        <input type="text" id="company_size" name="company_size" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="budget" class="block text-sm font-medium text-gray-700 mb-1">Budget (£)</label>
+                        <input type="number" id="budget" name="budget" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="interest_level" class="block text-sm font-medium text-gray-700 mb-1">Interest Level</label>
+                        <select id="interest_level" name="interest_level" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-lg font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200">
+                            Submit Lead
+                        </button>
+                        <button type="button" id="generateEmailBtn" class="w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-lg font-bold text-gray-900 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all duration-200">
+                            ✨ Generate Follow-up Email
+                        </button>
+                    </div>
+                </form>
+
+                <div id="llmResponseArea" class="mt-8 hidden">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Generated Email Draft</h2>
+                    <div id="emailOutput" class="bg-gray-50 p-6 rounded-xl border border-gray-200 text-gray-700 leading-relaxed whitespace-pre-wrap"></div>
+                    <div class="flex justify-end mt-4">
+                        <button id="copyEmailBtn" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-purple-700 transition duration-200 hidden">
+                            Copy to Clipboard
+                        </button>
+                    </div>
+                </div>
+
+                <div id="messageBox" class="mt-6 hidden p-4 rounded-xl text-center"></div>
             </div>
-            <div class="flex justify-end mt-4">
-                <button id="copyEmailBtn" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-purple-700 transition duration-200 hidden">
-                    Copy to Clipboard
-                </button>
+        </section>
+
+        <!-- Interactive Workflow Section -->
+        <section id="spa-view" class="my-16 hidden">
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-2 text-center">Lead Scoring & Notification Automation</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto text-center">An interactive breakdown of an automated workflow that qualifies leads, stores them, and sends smart notifications for high-value opportunities.</p>
+            
+            <section id="workflow-diagram" class="my-16">
+                <h2 class="text-3xl font-bold text-center mb-4">How It Works</h2>
+                <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">This is the core of the automation. Click on any step below to see more details about its function, the technology used, and sample data.</p>
+                
+                <div class="flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-8">
+                    <div class="workflow-step text-center cursor-pointer" data-step="trigger">
+                        <div class="bg-white rounded-xl shadow-lg p-6 w-64 h-40 flex flex-col justify-center items-center border-2 border-transparent hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-1">
+                            <div class="text-4xl mb-2">📥</div><h3 class="font-bold text-lg">Webhook Trigger</h3><p class="text-sm text-gray-500">Receives New Leads</p>
+                        </div>
+                    </div>
+                    <div class="flow-arrow transform md:-rotate-90">↓</div>
+                    <div class="workflow-step text-center cursor-pointer" data-step="scoring">
+                        <div class="bg-white rounded-xl shadow-lg p-6 w-64 h-40 flex flex-col justify-center items-center border-2 border-transparent hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-1">
+                            <div class="text-4xl mb-2">⚖️</div><h3 class="font-bold text-lg">Scoring Logic</h3><p class="text-sm text-gray-500">Qualifies Leads</p>
+                        </div>
+                    </div>
+                    <div class="flow-arrow transform md:-rotate-90">↓</div>
+                    <div class="workflow-step text-center cursor-pointer" data-step="storage">
+                        <div class="bg-white rounded-xl shadow-lg p-6 w-64 h-40 flex flex-col justify-center items-center border-2 border-transparent hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-1">
+                            <div class="text-4xl mb-2">🗄️</div><h3 class="font-bold text-lg">Data Storage</h3><p class="text-sm text-gray-500">Saves to Database</p>
+                        </div>
+                    </div>
+                    <div class="flow-arrow transform md:-rotate-90">↓</div>
+                    <div class="workflow-step text-center cursor-pointer" data-step="notification">
+                        <div class="bg-white rounded-xl shadow-lg p-6 w-64 h-40 flex flex-col justify-center items-center border-2 border-transparent hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-1">
+                            <div class="text-4xl mb-2">🔔</div><h3 class="font-bold text-lg">Smart Notification</h3><p class="text-sm text-gray-500">Alerts for Hot Leads</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="simulator-section" class="my-24 bg-white rounded-2xl shadow-xl p-8 md:p-12">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold mb-4">Lead Score Simulator</h2>
+                        <p class="text-gray-600 mb-8">See the scoring logic in action. Adjust the budget and interest level to see how a lead's score changes instantly. This demonstrates the core business rule of the automation.</p>
+                        <div class="space-y-6">
+                            <div>
+                                <label for="budget-slider-spa" class="block font-medium mb-2">Lead's Budget: <span id="budget-value-spa" class="font-bold accent-color">£5000</span></label>
+                                <input type="range" id="budget-slider-spa" min="0" max="10000" step="100" value="5000" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="block font-medium mb-2">Interest Level:</label>
+                                <div class="flex space-x-4" id="interest-level-selector-spa">
+                                    <label class="flex items-center space-x-2 cursor-pointer">
+                                        <input type="radio" name="interest-spa" value="Low" class="form-radio h-5 w-5 accent-color">
+                                        <span>Low</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 cursor-pointer">
+                                        <input type="radio" name="interest-spa" value="Medium" class="form-radio h-5 w-5 accent-color" checked>
+                                        <span>Medium</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 cursor-pointer">
+                                        <input type="radio" name="interest-spa" value="High" class="form-radio h-5 w-5 accent-color">
+                                        <span>High</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="score-result-card-spa" class="secondary-bg rounded-xl p-8 text-center flex flex-col justify-center items-center h-full transition-all duration-300">
+                        <p class="font-medium text-gray-600 mb-2">Calculated Score</p>
+                        <div id="score-display-spa" class="text-5xl font-extrabold">Warm Lead</div>
+                        <p id="score-reason-spa" class="mt-4 text-gray-500">Budget is over £1000 but interest is not High.</p>
+                    </div>
+                </div>
+            </section>
+            <section id="tech-stack-section" class="my-16">
+                <h2 class="text-3xl font-bold text-center mb-12">Technology Stack</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center flex flex-col items-center justify-center">
+                        <div class="text-4xl mb-2">⚙️</div><h3 class="font-bold text-lg">n8n</h3>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center flex flex-col items-center justify-center">
+                        <div class="text-4xl mb-2">🐘</div><h3 class="font-bold text-lg">Supabase</h3>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center flex flex-col items-center justify-center">
+                        <div class="text-4xl mb-2">💬</div><h3 class="font-bold text-lg">Slack</h3>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-lg p-6 text-center flex flex-col items-center justify-center">
+                        <div class="text-4xl mb-2">🌐</div><h3 class="font-bold text-lg">GitHub Pages</h3>
+                    </div>
+                </div>
+            </section>
+            <section id="takeaways-section" class="my-16">
+                <h2 class="text-3xl font-bold text-center mb-12">Limitations & Improvements</h2>
+                <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="font-bold text-lg mb-2">🎯 More Nuanced Scoring</h3>
+                        <p class="text-gray-600">The current logic is simple. A future version could use a point-based system considering more factors like company size or industry for greater accuracy.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="font-bold text-lg mb-2">🛡️ Robust Validation</h3>
+                        <p class="text-gray-600">The workflow assumes valid input. Server-side validation should be added within n8n to handle missing fields or incorrect data types gracefully.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="font-bold text-lg mb-2">📈 CRM Integration</h3>
+                        <p class="text-gray-600">While Supabase is excellent, a dedicated CRM integration would provide better long-term lead management and sales pipeline tracking.</p>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+    
+    <!-- Modal -->
+    <div id="modal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 opacity-0 pointer-events-none">
+        <div id="modal-content" class="modal-content bg-white rounded-2xl shadow-2xl w-11/12 max-w-2xl p-8 transform scale-95">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-2xl font-bold"></h3>
+                <button id="modal-close-btn" class="text-3xl font-light text-gray-500 hover:text-black">&times;</button>
             </div>
+            <div id="modal-body" class="text-gray-700"></div>
         </div>
-
-        <!-- Message Box for Success/Error -->
-        <div id="messageBox" class="mt-6 hidden p-4 rounded-xl text-center"></div>
-
     </div>
 
     <script>
-        const form = document.getElementById('leadForm');
-        const messageBox = document.getElementById('messageBox');
-        const generateEmailBtn = document.getElementById('generateEmailBtn');
-        const llmResponseArea = document.getElementById('llmResponseArea');
-        const emailOutput = document.getElementById('emailOutput');
-        const copyEmailBtn = document.getElementById('copyEmailBtn');
-        const webhookUrl = 'https://n8n.intellsys.ai/webhook-test/leadscoringandsaving';
+        document.addEventListener('DOMContentLoaded', () => {
+            // Main navigation logic
+            const formView = document.getElementById('form-view');
+            const spaView = document.getElementById('spa-view');
+            const formTab = document.getElementById('form-tab');
+            const spaTab = document.getElementById('spa-tab');
 
-        // Function to copy text to clipboard
-        const copyToClipboard = (text) => {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                messageBox.textContent = 'Email copied to clipboard!';
-                messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-green-100 text-green-800 font-semibold transition-all block';
-            } catch (err) {
-                console.error('Failed to copy text: ', err);
-                messageBox.textContent = 'Failed to copy text.';
-                messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-red-100 text-red-800 font-semibold transition-all block';
-            } finally {
-                document.body.removeChild(textarea);
-            }
-        };
-
-        // Event listener for the "Submit Lead" button (original functionality)
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-
-            messageBox.textContent = 'Submitting...';
-            messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-blue-100 text-blue-800 font-semibold transition-all block';
-
-            try {
-                const response = await fetch(webhookUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                if (response.ok) {
-                    messageBox.textContent = 'Success! Your lead has been submitted.';
-                    messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-green-100 text-green-800 font-semibold transition-all block';
-                    form.reset();
+            const showView = (viewId) => {
+                if (viewId === 'form') {
+                    formView.classList.remove('hidden');
+                    spaView.classList.add('hidden');
+                    formTab.classList.add('active');
+                    spaTab.classList.remove('active');
                 } else {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'An error occurred during submission.');
-                }
-            } catch (error) {
-                console.error('Submission Error:', error);
-                messageBox.textContent = `Error: ${error.message}`;
-                messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-red-100 text-red-800 font-semibold transition-all block';
-                llmResponseArea.classList.add('hidden'); // Hide LLM area on form submission error
-            }
-        });
-
-        // Event listener for the "Generate Follow-up Email" button
-        generateEmailBtn.addEventListener('click', async () => {
-            // Get form data for the prompt
-            const fullName = document.getElementById('full_name').value;
-            const companySize = document.getElementById('company_size').value;
-            const budget = document.getElementById('budget').value;
-            const interestLevel = document.getElementById('interest_level').value;
-
-            if (!fullName || !budget || !interestLevel) {
-                messageBox.textContent = 'Please fill out Full Name, Budget, and Interest Level to generate an email.';
-                messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-yellow-100 text-yellow-800 font-semibold transition-all block';
-                return;
-            }
-
-            // Show loading state
-            emailOutput.textContent = 'Generating email draft...';
-            llmResponseArea.classList.remove('hidden');
-            copyEmailBtn.classList.add('hidden');
-            messageBox.classList.add('hidden');
-
-            const prompt = `Draft a concise and professional follow-up email to a new sales lead. The lead's name is ${fullName}. Their company size is ${companySize}. Their budget is £${budget}. Their interest level is ${interestLevel}. The email should thank them for their interest, reference the key details provided, and suggest a brief call to discuss their needs further. Sign off as a Sales Representative.`;
-
-            // Prepare the payload for the Gemini API
-            let chatHistory = [];
-            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-            const payload = { contents: chatHistory };
-            const apiKey = "AIzaSyCtl7-3p9cJjUra3NMDxFhv7nlfG7biTp8";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-            
-            // Exponential backoff retry logic
-            const maxRetries = 5;
-            const initialDelay = 1000;
-            
-            let retryCount = 0;
-            const callGeminiApi = async () => {
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        if (response.status === 429 && retryCount < maxRetries) {
-                            const delay = initialDelay * Math.pow(2, retryCount);
-                            retryCount++;
-                            console.warn(`Rate limit hit, retrying in ${delay}ms...`);
-                            await new Promise(res => setTimeout(res, delay));
-                            return await callGeminiApi();
-                        }
-                        const errorData = await response.json();
-                        throw new Error(errorData.error.message || 'API call failed');
-                    }
-
-                    const result = await response.json();
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        const text = result.candidates[0].content.parts[0].text;
-                        emailOutput.textContent = text;
-                        copyEmailBtn.classList.remove('hidden');
-                    } else {
-                        throw new Error('API response was empty or malformed.');
-                    }
-                } catch (error) {
-                    console.error('API Error:', error);
-                    emailOutput.textContent = `Error: ${error.message}`;
+                    formView.classList.add('hidden');
+                    spaView.classList.remove('hidden');
+                    formTab.classList.remove('active');
+                    spaTab.classList.add('active');
                 }
             };
 
-            await callGeminiApi();
-        });
+            formTab.addEventListener('click', () => showView('form'));
+            spaTab.addEventListener('click', () => showView('spa'));
 
-        // Event listener for the "Copy to Clipboard" button
-        copyEmailBtn.addEventListener('click', () => {
-            copyToClipboard(emailOutput.textContent);
+            // Modal Logic
+            const modal = document.getElementById('modal');
+            const modalContent = document.getElementById('modal-content');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+
+            const modalData = {
+                trigger: {
+                    title: '📥 Webhook Trigger',
+                    content: `
+                        <p class="mb-4">The workflow starts when a new lead is submitted from a web form. The n8n Webhook node listens for incoming HTTP POST requests at a unique URL.</p>
+                        <h4 class="font-semibold mb-2">Accepted Data Fields:</h4>
+                        <ul class="list-disc list-inside bg-gray-50 p-4 rounded-lg">
+                            <li>full_name</li>
+                            <li>email</li>
+                            <li>phone</li>
+                            <li>company_size</li>
+                            <li>budget</li>
+                            <li>interest_level</li>
+                        </ul>
+                    `
+                },
+                scoring: {
+                    title: '⚖️ Scoring Logic',
+                    content: `
+                        <p class="mb-4">Once a lead is received, the IF node immediately evaluates it based on a set of rules to determine its priority.</p>
+                        <h4 class="font-semibold mb-2">Scoring Rules:</h4>
+                        <div class="space-y-2">
+                            <div class="bg-red-50 border border-red-200 p-3 rounded-lg"><strong>Hot Lead:</strong> Budget > £5000 AND Interest Level is 'High'</div>
+                            <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-lg"><strong>Warm Lead:</strong> Budget > £1000 (and not a Hot Lead)</div>
+                            <div class="bg-blue-50 border border-blue-200 p-3 rounded-lg"><strong>Cold Lead:</strong> All other cases</div>
+                        </div>
+                    `
+                },
+                storage: {
+                    title: '🗄️ Data Storage',
+                    content: `
+                        <p class="mb-4">Every lead, regardless of its score, is saved to a database for tracking and future reference. This is handled by the Supabase node.</p>
+                        <h4 class="font-semibold mb-2">Database Schema (leads table):</h4>
+                        <pre class="bg-gray-800 text-white p-4 rounded-lg text-sm overflow-x-auto"><code>CREATE TABLE leads (
+  id UUID PRIMARY KEY,
+  full_name TEXT,
+  email TEXT,
+  budget INTEGER,
+  interest_level TEXT,
+  score TEXT,
+  created_at TIMESTAMPTZ
+);</code></pre>
+                    `
+                },
+                notification: {
+                    title: '🔔 Smart Notification',
+                    content: `
+                        <p class="mb-4">If a lead is scored as 'Hot', a real-time notification is sent to the sales team via Slack. This allows for immediate follow-up on high-value opportunities.</p>
+                        <h4 class="font-semibold mb-2">Sample Slack Message:</h4>
+                        <div class="bg-gray-100 p-4 rounded-lg border border-gray-200">
+                            <p class="font-bold">🔥 New Hot Lead: John Doe</p>
+                            <p><strong>Budget:</strong> £7500</p>
+                            <p><strong>Interest:</strong> High</p>
+                            <p class="mt-2 text-sm text-gray-600">– Check Supabase for full details.</p>
+                        </div>
+                    `
+                }
+            };
+
+            document.querySelectorAll('.workflow-step').forEach(step => {
+                step.addEventListener('click', () => {
+                    const stepId = step.dataset.step;
+                    modalTitle.textContent = modalData[stepId].title;
+                    modalBody.innerHTML = modalData[stepId].content;
+                    modal.classList.remove('opacity-0', 'pointer-events-none');
+                    modalContent.classList.remove('scale-95');
+                });
+            });
+
+            const closeModal = () => {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                modalContent.classList.add('scale-95');
+            };
+
+            modalCloseBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Simulator Logic (for spa-view)
+            const budgetSliderSpa = document.getElementById('budget-slider-spa');
+            const budgetValueDisplaySpa = document.getElementById('budget-value-spa');
+            const interestSelectorSpa = document.getElementById('interest-level-selector-spa');
+            const scoreDisplaySpa = document.getElementById('score-display-spa');
+            const scoreReasonSpa = document.getElementById('score-reason-spa');
+            const scoreCardSpa = document.getElementById('score-result-card-spa');
+
+            const updateScoreSpa = () => {
+                const budget = parseInt(budgetSliderSpa.value);
+                const interest = document.querySelector('input[name="interest-spa"]:checked').value;
+
+                budgetValueDisplaySpa.textContent = `£${budget.toLocaleString()}`;
+                
+                let score = '';
+                let reason = '';
+                let cardColor = 'secondary-bg';
+
+                if (budget > 5000 && interest === 'High') {
+                    score = 'Hot Lead';
+                    reason = 'Budget is over £5000 and interest is High.';
+                    cardColor = 'bg-red-100';
+                } else if (budget > 1000) {
+                    score = 'Warm Lead';
+                    reason = 'Budget is over £1000 but interest is not High.';
+                    cardColor = 'bg-yellow-100';
+                } else {
+                    score = 'Cold Lead';
+                    reason = 'Budget is £1000 or less.';
+                    cardColor = 'bg-blue-100';
+                }
+                
+                scoreDisplaySpa.textContent = score;
+                scoreReasonSpa.textContent = reason;
+                scoreCardSpa.className = `rounded-xl p-8 text-center flex flex-col justify-center items-center h-full transition-all duration-300 ${cardColor}`;
+            };
+
+            budgetSliderSpa.addEventListener('input', updateScoreSpa);
+            interestSelectorSpa.addEventListener('change', updateScoreSpa);
+            
+            // Simulator Logic (for form view)
+            const form = document.getElementById('leadForm');
+            const messageBox = document.getElementById('messageBox');
+            const generateEmailBtn = document.getElementById('generateEmailBtn');
+            const llmResponseArea = document.getElementById('llmResponseArea');
+            const emailOutput = document.getElementById('emailOutput');
+            const copyEmailBtn = document.getElementById('copyEmailBtn');
+            const webhookUrl = 'https://n8n.intellsys.ai/webhook-test/leadscoringandsaving';
+
+            const copyToClipboard = (text) => {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    messageBox.textContent = 'Email copied to clipboard!';
+                    messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-green-100 text-green-800 font-semibold transition-all block';
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                    messageBox.textContent = 'Failed to copy text.';
+                    messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-red-100 text-red-800 font-semibold transition-all block';
+                } finally {
+                    document.body.removeChild(textarea);
+                }
+            };
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                messageBox.textContent = 'Submitting...';
+                messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-blue-100 text-blue-800 font-semibold transition-all block';
+                try {
+                    const response = await fetch(webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                    if (response.ok) {
+                        messageBox.textContent = 'Success! Your lead has been submitted.';
+                        messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-green-100 text-green-800 font-semibold transition-all block';
+                        form.reset();
+                    } else {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'An error occurred during submission.');
+                    }
+                } catch (error) {
+                    console.error('Submission Error:', error);
+                    messageBox.textContent = `Error: ${error.message}`;
+                    messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-red-100 text-red-800 font-semibold transition-all block';
+                    llmResponseArea.classList.add('hidden');
+                }
+            });
+
+            generateEmailBtn.addEventListener('click', async () => {
+                const fullName = document.getElementById('full_name').value;
+                const companySize = document.getElementById('company_size').value;
+                const budget = document.getElementById('budget').value;
+                const interestLevel = document.getElementById('interest_level').value;
+                if (!fullName || !budget || !interestLevel) {
+                    messageBox.textContent = 'Please fill out Full Name, Budget, and Interest Level to generate an email.';
+                    messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-yellow-100 text-yellow-800 font-semibold transition-all block';
+                    return;
+                }
+                emailOutput.textContent = 'Generating email draft...';
+                llmResponseArea.classList.remove('hidden');
+                copyEmailBtn.classList.add('hidden');
+                messageBox.classList.add('hidden');
+                const prompt = `Draft a concise and professional follow-up email to a new sales lead. The lead's name is ${fullName}. Their company size is ${companySize}. Their budget is £${budget}. Their interest level is ${interestLevel}. The email should thank them for their interest, reference the key details provided, and suggest a brief call to discuss their needs further. Sign off as a Sales Representative.`;
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = "AIzaSyCtl7-3p9cJjUra3NMDxFhv7nlfG7biTp8";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                const maxRetries = 5;
+                const initialDelay = 1000;
+                let retryCount = 0;
+                const callGeminiApi = async () => {
+                    try {
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        if (!response.ok) {
+                            if (response.status === 429 && retryCount < maxRetries) {
+                                const delay = initialDelay * Math.pow(2, retryCount);
+                                retryCount++;
+                                console.warn(`Rate limit hit, retrying in ${delay}ms...`);
+                                await new Promise(res => setTimeout(res, delay));
+                                return await callGeminiApi();
+                            }
+                            const errorData = await response.json();
+                            throw new Error(errorData.error.message || 'API call failed');
+                        }
+                        const result = await response.json();
+                        if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                            const text = result.candidates[0].content.parts[0].text;
+                            emailOutput.textContent = text;
+                            copyEmailBtn.classList.remove('hidden');
+                        } else {
+                            throw new Error('API response was empty or malformed.');
+                        }
+                    } catch (error) {
+                        console.error('API Error:', error);
+                        emailOutput.textContent = `Error: ${error.message}`;
+                    }
+                };
+                await callGeminiApi();
+            });
+
+            copyEmailBtn.addEventListener('click', () => {
+                copyToClipboard(emailOutput.textContent);
+            });
+            
+            updateScoreSpa();
         });
     </script>
-
 </body>
 </html>
