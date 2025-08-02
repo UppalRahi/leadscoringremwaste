@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qualify Your Lead</title>
+    <!-- Inter Font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
+
+    <!-- Main Container Card -->
+    <div class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl p-8 md:p-12 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-3xl">
+
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight leading-tight">
+                Qualify Your Lead
+            </h1>
+            <p class="text-lg text-gray-500 font-medium">
+                Fill out the form below to submit a new lead to our system.
+            </p>
+        </div>
+        
+        <!-- Logo -->
+        <div class="text-center mb-10">
+            <img src="https://www.renewableenergymarketing.net/wp-content/uploads/2019/02/Skip-Hire-REM-Waste-Transparent-logo.png" onerror="this.onerror=null;this.src='https://placehold.co/200x50/000000/FFFFFF?text=REM+WASTE'" alt="REM Waste Logo" class="mx-auto h-12 w-auto">
+        </div>
+
+        <!-- Form -->
+        <form id="leadForm" class="space-y-6">
+            <!-- Full Name -->
+            <div>
+                <label for="full_name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <input type="text" id="full_name" name="full_name" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="email" id="email" name="email" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
+            </div>
+
+            <!-- Phone -->
+            <div>
+                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                <input type="tel" id="phone" name="phone"
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
+            </div>
+
+            <!-- Company Size -->
+            <div>
+                <label for="company_size" class="block text-sm font-medium text-gray-700 mb-1">Company Size</label>
+                <input type="text" id="company_size" name="company_size"
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
+            </div>
+
+            <!-- Budget -->
+            <div>
+                <label for="budget" class="block text-sm font-medium text-gray-700 mb-1">Budget (£)</label>
+                <input type="number" id="budget" name="budget" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
+            </div>
+
+            <!-- Interest Level -->
+            <div>
+                <label for="interest_level" class="block text-sm font-medium text-gray-700 mb-1">Interest Level</label>
+                <select id="interest_level" name="interest_level" required
+                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 ease-in-out sm:text-sm">
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+            </div>
+
+            <!-- Buttons for submission and LLM feature -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-lg font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200">
+                    Submit Lead
+                </button>
+                <button type="button" id="generateEmailBtn"
+                        class="w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-lg font-bold text-gray-900 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all duration-200">
+                    ✨ Generate Follow-up Email
+                </button>
+            </div>
+        </form>
+
+        <!-- LLM Response Area -->
+        <div id="llmResponseArea" class="mt-8 hidden">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Generated Email Draft</h2>
+            <div id="emailOutput" class="bg-gray-50 p-6 rounded-xl border border-gray-200 text-gray-700 leading-relaxed whitespace-pre-wrap">
+                <!-- LLM generated text will be inserted here -->
+            </div>
+            <div class="flex justify-end mt-4">
+                <button id="copyEmailBtn" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-purple-700 transition duration-200 hidden">
+                    Copy to Clipboard
+                </button>
+            </div>
+        </div>
+
+        <!-- Message Box for Success/Error -->
+        <div id="messageBox" class="mt-6 hidden p-4 rounded-xl text-center"></div>
+
+    </div>
+
+    <script>
+        const form = document.getElementById('leadForm');
+        const messageBox = document.getElementById('messageBox');
+        const generateEmailBtn = document.getElementById('generateEmailBtn');
+        const llmResponseArea = document.getElementById('llmResponseArea');
+        const emailOutput = document.getElementById('emailOutput');
+        const copyEmailBtn = document.getElementById('copyEmailBtn');
+        const webhookUrl = 'https://n8n.intellsys.ai/webhook-test/email-automation';
+
+        // Function to copy text to clipboard
+        const copyToClipboard = (text) => {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                messageBox.textContent = 'Email copied to clipboard!';
+                messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-green-100 text-green-800 font-semibold transition-all block';
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                messageBox.textContent = 'Failed to copy text.';
+                messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-red-100 text-red-800 font-semibold transition-all block';
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        };
+
+        // Event listener for the "Submit Lead" button (original functionality)
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            messageBox.textContent = 'Submitting...';
+            messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-blue-100 text-blue-800 font-semibold transition-all block';
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    messageBox.textContent = 'Success! Your lead has been submitted.';
+                    messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-green-100 text-green-800 font-semibold transition-all block';
+                    form.reset();
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'An error occurred during submission.');
+                }
+            } catch (error) {
+                console.error('Submission Error:', error);
+                messageBox.textContent = `Error: ${error.message}`;
+                messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-red-100 text-red-800 font-semibold transition-all block';
+                llmResponseArea.classList.add('hidden'); // Hide LLM area on form submission error
+            }
+        });
+
+        // Event listener for the "Generate Follow-up Email" button
+        generateEmailBtn.addEventListener('click', async () => {
+            // Get form data for the prompt
+            const fullName = document.getElementById('full_name').value;
+            const companySize = document.getElementById('company_size').value;
+            const budget = document.getElementById('budget').value;
+            const interestLevel = document.getElementById('interest_level').value;
+
+            if (!fullName || !budget || !interestLevel) {
+                messageBox.textContent = 'Please fill out Full Name, Budget, and Interest Level to generate an email.';
+                messageBox.className = 'mt-6 p-4 rounded-xl text-center bg-yellow-100 text-yellow-800 font-semibold transition-all block';
+                return;
+            }
+
+            // Show loading state
+            emailOutput.textContent = 'Generating email draft...';
+            llmResponseArea.classList.remove('hidden');
+            copyEmailBtn.classList.add('hidden');
+            messageBox.classList.add('hidden');
+
+            const prompt = `Draft a concise and professional follow-up email to a new sales lead. The lead's name is ${fullName}. Their company size is ${companySize}. Their budget is £${budget}. Their interest level is ${interestLevel}. The email should thank them for their interest, reference the key details provided, and suggest a brief call to discuss their needs further. Sign off as a Sales Representative.`;
+
+            // Prepare the payload for the Gemini API
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = "AIzaSyCtl7-3p9cJjUra3NMDxFhv7nlfG7biTp8";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            
+            // Exponential backoff retry logic
+            const maxRetries = 5;
+            const initialDelay = 1000;
+            
+            let retryCount = 0;
+            const callGeminiApi = async () => {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 429 && retryCount < maxRetries) {
+                            const delay = initialDelay * Math.pow(2, retryCount);
+                            retryCount++;
+                            console.warn(`Rate limit hit, retrying in ${delay}ms...`);
+                            await new Promise(res => setTimeout(res, delay));
+                            return await callGeminiApi();
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.error.message || 'API call failed');
+                    }
+
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        emailOutput.textContent = text;
+                        copyEmailBtn.classList.remove('hidden');
+                    } else {
+                        throw new Error('API response was empty or malformed.');
+                    }
+                } catch (error) {
+                    console.error('API Error:', error);
+                    emailOutput.textContent = `Error: ${error.message}`;
+                }
+            };
+
+            await callGeminiApi();
+        });
+
+        // Event listener for the "Copy to Clipboard" button
+        copyEmailBtn.addEventListener('click', () => {
+            copyToClipboard(emailOutput.textContent);
+        });
+    </script>
+
+</body>
+</html>
